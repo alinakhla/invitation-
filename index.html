@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date Invitation</title>
+  <style>
+    :root {
+      --bg-1: #fff6f8;
+      --bg-2: #ffe0ea;
+      --pink: #ff6fa1;
+      --pink-soft: #ffc1d6;
+      --rose: #ff4d6d;
+      --red-soft: #ff7b89;
+      --white: #ffffff;
+      --text: #8b2f52;
+      --shadow: 0 18px 45px rgba(255, 111, 161, 0.25);
+      --glow: 0 0 18px rgba(255, 105, 145, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Trebuchet MS", "Comic Sans MS", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.55) 28%, transparent 45%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 6% 10%, rgba(255, 192, 203, 0.65) 0 26px, transparent 27px),
+        radial-gradient(circle at 94% 16%, rgba(255, 240, 245, 0.95) 0 34px, transparent 35px),
+        radial-gradient(circle at 14% 92%, rgba(255, 182, 193, 0.7) 0 28px, transparent 29px),
+        radial-gradient(circle at 88% 86%, rgba(255, 228, 236, 0.95) 0 36px, transparent 37px);
+      opacity: 0.85;
+    }
+
+    body::after {
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(255, 77, 109, 0.28) 0 4px, transparent 5px),
+        radial-gradient(circle at 17% 23%, rgba(255, 182, 193, 0.7) 0 13px, transparent 14px),
+        radial-gradient(circle at 82% 14%, rgba(255, 77, 109, 0.28) 0 4px, transparent 5px),
+        radial-gradient(circle at 87% 19%, rgba(255, 182, 193, 0.7) 0 13px, transparent 14px),
+        radial-gradient(circle at 10% 84%, rgba(255, 77, 109, 0.28) 0 4px, transparent 5px),
+        radial-gradient(circle at 15% 89%, rgba(255, 182, 193, 0.7) 0 13px, transparent 14px),
+        radial-gradient(circle at 84% 82%, rgba(255, 77, 109, 0.28) 0 4px, transparent 5px),
+        radial-gradient(circle at 89% 87%, rgba(255, 182, 193, 0.7) 0 13px, transparent 14px);
+      opacity: 0.8;
+    }
+
+    .scene {
+      position: relative;
+      width: min(100%, 780px);
+      z-index: 1;
+    }
+
+    .card {
+      position: relative;
+      padding: 30px 22px 36px;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      overflow: hidden;
+      animation: fadeUp 1.15s ease both;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 2px dashed rgba(255, 111, 161, 0.25);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .flower {
+      position: absolute;
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 8px rgba(255, 111, 161, 0.25));
+      animation: sway 4s ease-in-out infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .flower.one { top: 18px; left: 18px; }
+    .flower.two { top: 18px; right: 18px; animation-delay: 0.9s; }
+    .flower.three { bottom: 22px; left: 22px; animation-delay: 1.5s; }
+    .flower.four { bottom: 22px; right: 22px; animation-delay: 2.1s; }
+
+    .photo-wrap {
+      width: 170px;
+      height: 170px;
+      margin: 6px auto 22px;
+      border-radius: 50%;
+      padding: 7px;
+      background: linear-gradient(135deg, #ffd6e5, #fff8fb, #ff93b8);
+      box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.65), var(--glow);
+      animation: floaty 4s ease-in-out infinite;
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      border: 4px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255, 111, 161, 0.12);
+      color: var(--rose);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      box-shadow: inset 0 0 0 1px rgba(255, 111, 161, 0.12);
+    }
+
+    h1 {
+      min-height: 2.6em;
+      font-size: clamp(2rem, 7vw, 3.8rem);
+      line-height: 1.15;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 18px rgba(255, 127, 156, 0.35);
+      margin-bottom: 12px;
+    }
+
+    .subtext {
+      font-size: 1rem;
+      max-width: 540px;
+      margin: 0 auto 24px;
+      color: #9a4864;
+    }
+
+    .details-card {
+      margin: 0 auto 22px;
+      width: min(100%, 430px);
+      background: linear-gradient(180deg, rgba(255, 244, 247, 0.95), rgba(255, 255, 255, 0.92));
+      border-radius: 24px;
+      padding: 22px 20px;
+      box-shadow: 0 12px 28px rgba(255, 147, 184, 0.18);
+      border: 1px solid rgba(255, 111, 161, 0.14);
+    }
+
+    .details-card p {
+      font-size: 1.12rem;
+      margin: 10px 0;
+    }
+
+    .tease-message {
+      min-height: 1.6em;
+      font-size: 1rem;
+      color: var(--rose);
+      margin-bottom: 20px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .buttons-area {
+      position: relative;
+      min-height: 170px;
+      width: min(100%, 460px);
+      margin: 0 auto;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 14px 28px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+      user-select: none;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 12px 28px rgba(255, 111, 161, 0.28);
+    }
+
+    .yes-btn {
+      position: relative;
+      z-index: 3;
+      background: linear-gradient(135deg, #ff7ea9, #ff4d6d);
+      color: white;
+      box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.3), var(--glow);
+      margin-right: 12px;
+      transform-origin: center;
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    .no-btn {
+      position: absolute;
+      top: 0;
+      left: calc(50% + 28px);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--rose);
+      box-shadow: 0 10px 22px rgba(255, 111, 161, 0.18);
+    }
+
+    .music-toggle {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--rose);
+      z-index: 5;
+    }
+
+    .celebration {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 240, 245, 0.58);
+      backdrop-filter: blur(5px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      z-index: 30;
+      padding: 20px;
+    }
+
+    .celebration.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .celebration-box {
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 28px;
+      padding: 28px 24px;
+      width: min(92vw, 420px);
+      box-shadow: var(--shadow);
+      text-align: center;
+      animation: popIn 0.45s ease;
+    }
+
+    .celebration-box h2 {
+      font-size: clamp(2rem, 8vw, 3rem);
+      color: var(--rose);
+      margin-bottom: 10px;
+      text-shadow: var(--glow);
+    }
+
+    .celebration-box p {
+      font-size: 1.05rem;
+      color: #94435d;
+    }
+
+    .floating-hearts,
+    .sparkles,
+    .burst-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .burst-layer {
+      z-index: 31;
+    }
+
+    .heart,
+    .sparkle,
+    .burst {
+      position: absolute;
+      bottom: -10vh;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      user-select: none;
+    }
+
+    .heart {
+      color: rgba(255, 77, 109, 0.35);
+      animation-name: rise;
+    }
+
+    .sparkle {
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: 0 0 10px rgba(255, 182, 193, 0.7);
+      animation-name: twinkleFloat;
+    }
+
+    .burst {
+      bottom: auto;
+      animation-name: burstFly;
+      animation-duration: 2.2s;
+      animation-iteration-count: 1;
+      font-size: 1.2rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translateY(-120vh) scale(1.35) rotate(30deg); opacity: 0; }
+    }
+
+    @keyframes twinkleFloat {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      20% { opacity: 0.95; }
+      100% { transform: translateY(-105vh) scale(1.35); opacity: 0; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-4deg) translateY(0); }
+      50% { transform: rotate(4deg) translateY(-5px); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.18), 0 0 20px rgba(255, 111, 161, 0.3); }
+      50% { box-shadow: 0 0 0 14px rgba(255, 77, 109, 0), 0 0 34px rgba(255, 111, 161, 0.45); }
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes burstFly {
+      0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)) scale(1.5) rotate(40deg); opacity: 0; }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 26px 16px 30px;
+      }
+
+      .photo-wrap {
+        width: 140px;
+        height: 140px;
+      }
+
+      .buttons-area {
+        min-height: 220px;
+      }
+
+      .yes-btn {
+        margin-right: 0;
+      }
+
+      .no-btn {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .music-toggle {
+        top: 14px;
+        right: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-hearts" id="floatingHearts"></div>
+  <div class="sparkles" id="sparkles"></div>
+  <div class="burst-layer" id="burstLayer"></div>
+
+  <button class="music-toggle" id="musicToggle" type="button">Music: Off</button>
+
+  <main class="scene">
+    <section class="card">
+      <span class="flower one">🌸</span>
+      <span class="flower two">🌹</span>
+      <span class="flower three">🌷</span>
+      <span class="flower four">🌼</span>
+
+      <div class="photo-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80"
+          alt="Replace with your couple photo"
+          id="couplePhoto"
+        >
+      </div>
+
+      <div class="eyebrow">A little surprise just for you</div>
+      <h1 id="titleText"></h1>
+      <p class="subtext">
+        I want to make a sweet memory with you, so I made this tiny invitation from my heart.
+      </p>
+
+      <div class="details-card">
+        <p>🎬 Friday, June 20th</p>
+        <p>🕖 7:00 PM</p>
+        <p>📍 MJ movie at the cinema</p>
+      </div>
+
+      <p class="tease-message" id="teaseMessage">You can only pick the cutest answer 💕</p>
+
+      <div class="buttons-area" id="buttonsArea">
+        <button class="yes-btn" id="yesBtn" type="button">YES 💖</button>
+        <button class="no-btn" id="noBtn" type="button">NO 💔</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="celebration" id="celebration">
+    <div class="celebration-box">
+      <h2>YAYYY ❤️ I love you!</h2>
+      <p>Movie date unlocked. Get ready for the sweetest cinema night ever. 🎥💞</p>
+    </div>
+  </section>
+
+  <audio id="bgMusic" loop preload="none">
+    <source src="https://cdn.pixabay.com/download/audio/2022/02/22/audio_d1718b31bd.mp3?filename=romantic-sentimental-background-music-115760.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const titleText = document.getElementById("titleText");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const buttonsArea = document.getElementById("buttonsArea");
+    const teaseMessage = document.getElementById("teaseMessage");
+    const celebration = document.getElementById("celebration");
+    const floatingHearts = document.getElementById("floatingHearts");
+    const sparkles = document.getElementById("sparkles");
+    const burstLayer = document.getElementById("burstLayer");
+    const musicToggle = document.getElementById("musicToggle");
+    const bgMusic = document.getElementById("bgMusic");
+
+    const fullTitle = "Will You Go On a Date With Me? ❤️";
+    const teaseMessages = [
+      "Are you sure? 🥺",
+      "Think again 💕",
+      "You know you want to 😘",
+      "Don't break my heart 💔"
+    ];
+
+    let titleIndex = 0;
+    let noClicks = 0;
+    let musicOn = false;
+
+    function typeTitle() {
+      if (titleIndex <= fullTitle.length) {
+        titleText.textContent = fullTitle.slice(0, titleIndex);
+        titleIndex += 1;
+        setTimeout(typeTitle, 75);
+      }
+    }
+
+    function createFloatingIcons(container, symbols, count, className, minSize, maxSize, minDuration, maxDuration) {
+      for (let i = 0; i < count; i += 1) {
+        const item = document.createElement("span");
+        const duration = (Math.random() * (maxDuration - minDuration) + minDuration).toFixed(2);
+        const delay = (Math.random() * 12).toFixed(2);
+        const left = (Math.random() * 100).toFixed(2);
+        const size = (Math.random() * (maxSize - minSize) + minSize).toFixed(2);
+
+        item.className = className;
+        item.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        item.style.left = left + "vw";
+        item.style.fontSize = size + "px";
+        item.style.animationDuration = duration + "s";
+        item.style.animationDelay = delay + "s";
+        item.style.opacity = (Math.random() * 0.5 + 0.2).toFixed(2);
+        container.appendChild(item);
+      }
+    }
+
+    function moveNoButton() {
+      const areaRect = buttonsArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = Math.max(0, areaRect.width - btnRect.width);
+      const maxY = Math.max(0, areaRect.height - btnRect.height);
+      const randomX = Math.random() * maxX;
+      const randomY = Math.random() * maxY;
+
+      noBtn.style.left = randomX + "px";
+      noBtn.style.top = randomY + "px";
+    }
+
+    function growYesButton() {
+      const scale = 1 + noClicks * 0.18;
+      yesBtn.style.transform = "scale(" + scale + ")";
+      yesBtn.style.padding = (14 + noClicks * 2) + "px " + (28 + noClicks * 6) + "px";
+      yesBtn.style.fontSize = (1.05 + noClicks * 0.08) + "rem";
+    }
+
+    function showTeaseMessage() {
+      teaseMessage.style.opacity = "0";
+      teaseMessage.style.transform = "translateY(8px)";
+      setTimeout(() => {
+        teaseMessage.textContent = teaseMessages[noClicks % teaseMessages.length];
+        teaseMessage.style.opacity = "1";
+        teaseMessage.style.transform = "translateY(0)";
+      }, 140);
+    }
+
+    function burstHearts(amount) {
+      for (let i = 0; i < amount; i += 1) {
+        const burst = document.createElement("span");
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 80 + Math.random() * 220;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        burst.className = "burst";
+        burst.textContent = ["❤️", "💖", "💕", "✨"][Math.floor(Math.random() * 4)];
+        burst.style.left = "50%";
+        burst.style.top = "50%";
+        burst.style.setProperty("--x", x + "px");
+        burst.style.setProperty("--y", y + "px");
+        burst.style.fontSize = (18 + Math.random() * 24) + "px";
+        burst.style.animationDelay = (Math.random() * 0.2).toFixed(2) + "s";
+        burstLayer.appendChild(burst);
+        setTimeout(() => burst.remove(), 2300);
+      }
+    }
+
+    noBtn.addEventListener("click", () => {
+      noClicks += 1;
+      moveNoButton();
+      growYesButton();
+      showTeaseMessage();
+    });
+
+    yesBtn.addEventListener("click", async () => {
+      celebration.classList.add("show");
+      burstHearts(44);
+      teaseMessage.textContent = "Best answer ever 💘";
+      if (!musicOn) {
+        try {
+          await bgMusic.play();
+          musicOn = true;
+          musicToggle.textContent = "Music: On";
+        } catch (error) {
+          // Browser autoplay can fail silently until a user interacts again.
+        }
+      }
+    });
+
+    celebration.addEventListener("click", () => {
+      celebration.classList.remove("show");
+    });
+
+    musicToggle.addEventListener("click", async () => {
+      if (musicOn) {
+        bgMusic.pause();
+        musicOn = false;
+        musicToggle.textContent = "Music: Off";
+        return;
+      }
+
+      try {
+        await bgMusic.play();
+        musicOn = true;
+        musicToggle.textContent = "Music: On";
+      } catch (error) {
+        musicToggle.textContent = "Tap Again for Music";
+      }
+    });
+
+    createFloatingIcons(floatingHearts, ["❤", "💖", "💕"], 22, "heart", 16, 34, 10, 22);
+    createFloatingIcons(sparkles, ["✦", "✧", "⋆"], 18, "sparkle", 12, 22, 8, 18);
+    typeTitle();
+    moveNoButton();
+  </script>
+</body>
+</html>
